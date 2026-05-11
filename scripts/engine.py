@@ -21,8 +21,8 @@ if not API_KEY:
 else:
     client = genai.Client(api_key=API_KEY)
 
-# Use the latest fast model
-MODEL_ID = 'gemini-2.5-flash'
+# Use a more stable, highly-available model
+MODEL_ID = 'gemini-1.5-flash'
 
 def agent_researcher(topic_data):
     """Agent 1: Extracts key facts and pain points from raw data."""
