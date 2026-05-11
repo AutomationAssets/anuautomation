@@ -1,7 +1,7 @@
-baseURL = 'https://example.org/'
+baseURL = 'https://AutomationAssets.github.io/anuautomation/'
 languageCode = 'en-us'
 title = 'AACE AI Tool Reviews'
-theme = 'papermod'
+theme = 'PaperMod'
 
 [params]
   env = 'production'
