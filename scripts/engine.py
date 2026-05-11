@@ -99,11 +99,19 @@ if __name__ == "__main__":
     top_topic = topics[0]
     print(f"Processing Topic: {top_topic['title']}")
     
+    import time
+    
     print("Running Agent 1: Researcher...")
     research = agent_researcher(top_topic)
     
+    print("Waiting 15 seconds to prevent free-tier rate limits...")
+    time.sleep(15)
+    
     print("Running Agent 2: Copywriter...")
     draft = agent_copywriter(research, top_topic['title'])
+    
+    print("Waiting 15 seconds to prevent free-tier rate limits...")
+    time.sleep(15)
     
     print("Running Agent 3: Editor...")
     final_article = agent_editor(draft)
