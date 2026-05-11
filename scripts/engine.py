@@ -49,12 +49,17 @@ def agent_researcher(topic_data):
 
 def agent_copywriter(research_data, topic_title):
     """Agent 2: Drafts the SEO-optimized article."""
+    
+    # Safely convert to string in case the AI returns a dictionary instead of a plain string
+    pain_points_str = ', '.join([str(p) for p in research_data.get('pain_points', [])])
+    tools_str = ', '.join([str(t) for t in research_data.get('suggested_tools', [])])
+    
     prompt = f"""
     You are an elite B2B SaaS copywriter. Write a 600-word SEO-optimized blog post based on this research:
     Topic: {topic_title}
-    Core Problem: {research_data['core_problem']}
-    Pain Points: {', '.join(research_data['pain_points'])}
-    Suggested Tools: {', '.join(research_data['suggested_tools'])}
+    Core Problem: {research_data.get('core_problem', 'Solving the issue')}
+    Pain Points: {pain_points_str}
+    Suggested Tools: {tools_str}
     
     Use the PAS (Problem, Agitation, Solution) framework.
     Include Markdown headings (H2, H3).
