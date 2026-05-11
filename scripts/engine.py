@@ -22,7 +22,7 @@ else:
     client = genai.Client(api_key=API_KEY)
 
 # Use a more stable, highly-available model
-MODEL_ID = 'gemini-1.5-flash'
+MODEL_ID = 'gemini-1.5-flash-latest'
 
 def agent_researcher(topic_data):
     """Agent 1: Extracts key facts and pain points from raw data."""
