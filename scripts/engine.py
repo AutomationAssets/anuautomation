@@ -20,6 +20,18 @@ if not API_KEY:
     client = MockModel()
 else:
     client = genai.Client(api_key=API_KEY)
+    
+    print("--- DIAGNOSTIC: AVAILABLE MODELS ---")
+    try:
+        models = client.models.list()
+        for m in models:
+            if m.supported_actions and 'generateContent' in m.supported_actions:
+                print(f"Available: {m.name}")
+            elif hasattr(m, 'supported_methods') and 'generateContent' in getattr(m, 'supported_methods', []):
+                print(f"Available: {m.name}")
+    except Exception as e:
+        print(f"Could not list models: {e}")
+    print("------------------------------------")
 
 # Use the premium Pro model for a separate quota bucket and guaranteed API endpoint
 MODEL_ID = 'gemini-1.5-pro'
