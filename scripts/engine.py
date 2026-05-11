@@ -1,47 +1,46 @@
 import os
 import json
-import google.generativeai as genai
+from google import genai
 from dotenv import load_dotenv
 
 load_dotenv()
 
-# Configure Gemini API
+# Configure new Gemini API SDK
 API_KEY = os.getenv("GEMINI_API_KEY")
 
 if not API_KEY:
     print("Warning: GEMINI_API_KEY not found. Please set it to run the engine.")
     # For local dry run without API key
     class MockModel:
-        def generate_content(self, prompt):
+        def generate_content(self, model, contents):
             class MockResponse:
                 def __init__(self):
                     self.text = "# Mock AI Review\n\nThis is a generated mock review because no API key was found."
             return MockResponse()
-    model = MockModel()
+    client = MockModel()
 else:
-    genai.configure(api_key=API_KEY)
-    # Using Gemini 1.5 Flash for speed and cost-effectiveness (Free Tier)
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    client = genai.Client(api_key=API_KEY)
+
+# Use the latest fast model
+MODEL_ID = 'gemini-2.5-flash'
 
 def agent_researcher(topic_data):
     """Agent 1: Extracts key facts and pain points from raw data."""
     prompt = f"""
-    You are an expert market researcher. Analyze this trending topic from Reddit:
+    You are an expert market researcher. Analyze this trending topic:
     Title: {topic_data['title']}
     Context: {topic_data['selftext']}
     
     Extract the core problem the user is trying to solve, 3 key pain points, and suggest 2 real-world software tools that solve this problem.
     Output only a JSON object with keys: "core_problem", "pain_points", "suggested_tools".
     """
-    response = model.generate_content(prompt)
+    response = client.models.generate_content(model=MODEL_ID, contents=prompt)
     try:
-        # Simple extraction of JSON from markdown blocks if present
         text = response.text
         if "```json" in text:
             text = text.split("```json")[1].split("```")[0]
         return json.loads(text.strip())
     except:
-        # Fallback if AI doesn't return perfect JSON
         return {
             "core_problem": "Finding the right tool",
             "pain_points": ["Overwhelm", "Cost", "Integration"],
@@ -61,7 +60,7 @@ def agent_copywriter(research_data, topic_title):
     Include Markdown headings (H2, H3).
     Do NOT include a title (H1) at the top, just start the article.
     """
-    response = model.generate_content(prompt)
+    response = client.models.generate_content(model=MODEL_ID, contents=prompt)
     return response.text
 
 def agent_editor(draft_content):
@@ -75,13 +74,12 @@ def agent_editor(draft_content):
     Draft:
     {draft_content}
     """
-    response = model.generate_content(prompt)
+    response = client.models.generate_content(model=MODEL_ID, contents=prompt)
     return response.text
 
 if __name__ == "__main__":
     print("Starting AACE Multi-Agent Engine...")
     
-    # Load ingested data
     try:
         with open("data/trending_topics.json", "r") as f:
             topics = json.load(f)
@@ -93,7 +91,6 @@ if __name__ == "__main__":
         print("No topics to process.")
         exit(0)
         
-    # Pick the top topic for the daily post
     top_topic = topics[0]
     print(f"Processing Topic: {top_topic['title']}")
     
@@ -106,10 +103,8 @@ if __name__ == "__main__":
     print("Running Agent 3: Editor...")
     final_article = agent_editor(draft)
     
-    # Save output
     os.makedirs("data", exist_ok=True)
     with open("data/generated_article.md", "w", encoding='utf-8') as f:
-        # Also save the title for the formatter
         f.write(top_topic['title'] + "\n---\n")
         f.write(final_article)
         
