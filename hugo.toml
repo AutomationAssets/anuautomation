@@ -1,0 +1,24 @@
+baseURL = 'https://example.org/'
+languageCode = 'en-us'
+title = 'AACE AI Tool Reviews'
+theme = 'papermod'
+
+[params]
+  env = 'production'
+  title = 'AACE AI Reviews'
+  description = 'Your daily source for AI tool reviews and B2B SaaS solutions.'
+  author = 'AACE Bot'
+  
+  # Set to true to show summary in home page
+  ShowReadingTime = true
+  ShowShareButtons = true
+  ShowPostNavLinks = true
+  ShowBreadCrumbs = true
+
+  [params.profileMode]
+    enabled = false
+
+[taxonomies]
+  category = "categories"
+  tag = "tags"
+  series = "series"
